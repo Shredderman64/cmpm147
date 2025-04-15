@@ -7,24 +7,15 @@
 
 // Constants - User-servicable parts
 // In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
 
 // Globals
-let myInstance;
-let canvasContainer;
-var centerHorz, centerVert;
+let seed = 239;
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
-
-    myMethod() {
-        // code to run when method is called
-    }
-}
+const skyColor = "#b87833";
+const buildingColor1 = "rgb(100, 100, 100)";
+const buildingColor2 = "rgb(50, 50, 50)";
+const cloudColor = "#a65518";
+const waterColor = "rgba(100, 100, 155, 0.7)";
 
 function resizeScreen() {
   centerHorz = canvasContainer.width() / 2; // Adjusted for drawing logic
@@ -38,12 +29,11 @@ function resizeScreen() {
 function setup() {
   // place our canvas, making it fit our container
   canvasContainer = $("#canvas-container");
-  let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
+  let canvas = createCanvas(600, 400);
   canvas.parent("canvas-container");
+  let button = createButton("reimagine").mousePressed(() => seed++);
+  button.parent("canvas-container");
   // resize canvas is the page is resized
-
-  // create an instance of the class
-  myInstance = new MyClass("VALUE1", "VALUE2");
 
   $(window).resize(function() {
     resizeScreen();
@@ -53,24 +43,57 @@ function setup() {
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  background(220);    
-  // call a method on the instance
-  myInstance.myMethod();
+  randomSeed(seed);
 
-  // Set up rotation for the rectangle
-  push(); // Save the current drawing context
-  translate(centerHorz, centerVert); // Move the origin to the rectangle's center
-  rotate(frameCount / 100.0); // Rotate by frameCount to animate the rotation
-  fill(234, 31, 81);
+  background(skyColor);
+
   noStroke();
-  rect(-125, -125, 250, 250); // Draw the rectangle centered on the new origin
-  pop(); // Restore the original drawing context
 
-  // The text is not affected by the translate and rotate
-  fill(255);
-  textStyle(BOLD);
-  textSize(140);
-  text("p5*", centerHorz - 105, centerVert + 40);
+  fill(cloudColor);
+  const clouds = 50 * random();
+  for (let i = 0; i < clouds; i++) {
+    let z = random();
+    let x = width * ((random() + (millis() / 50000.0) / z) % 1);
+    let s = width / 30 / z;
+    let yLower = height / 2 + height / 10 / z + s;
+    let yUpper = height / 2 - height / 10 / z - s;
+    ellipse(x, yLower, s * 3, s * z);
+    ellipse(x, yUpper, s * 3, s * z);
+  }
+
+  fill(buildingColor1);
+  drawBuildings();
+  fill(buildingColor2);
+  drawBuildings();
+  
+  rectMode(CORNER);
+  fill(waterColor);
+  rect(0, height / 2, width, height / 2);
+}
+
+function drawBuildings() {
+  rectMode(CENTER);
+  const buildings = 50;
+  const buildingWidth = width / buildings;
+  for (let i = 0; i < buildings; i++) {
+    let x = buildingWidth * i + buildingWidth / 2;
+    let buildingHeight = max(200 * random() + 30, 30);
+    rect(x, height / 2, buildingWidth, buildingHeight);
+    
+    if (buildingHeight > 200) {
+      let spireHeight = max(25 * random(), 10);
+      triangle(
+        buildingWidth * i, (height - buildingHeight) / 2,
+        buildingWidth * (i + 1), (height - buildingHeight) / 2,
+        x, (height - buildingHeight) / 2 - spireHeight
+      );
+      triangle(
+        buildingWidth * i, (height + buildingHeight) / 2,
+        buildingWidth * (i + 1), (height + buildingHeight) / 2,
+        x, (height + buildingHeight) / 2 + spireHeight
+      );
+    }
+  }
 }
 
 // mousePressed() function is called once after every time a mouse button is pressed
