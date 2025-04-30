@@ -5,7 +5,6 @@
 
 // Project base code provided by {amsmith,ikarth}@ucsc.edu
 
-
 let tile_width_step_main; // A width step is half a tile's width
 let tile_height_step_main; // A height step is half a tile's height
 
@@ -157,16 +156,16 @@ function draw() {
 
   background(100);
 
-  if (window.p3_drawBefore) {
-    window.p3_drawBefore();
-  }
-
   let overdraw = 0.1;
 
   let y0 = Math.floor((0 - overdraw) * tile_rows);
   let y1 = Math.floor((1 + overdraw) * tile_rows);
   let x0 = Math.floor((0 - overdraw) * tile_columns);
   let x1 = Math.floor((1 + overdraw) * tile_columns);
+
+  if (window.p3_drawBefore) {
+    window.p3_drawBefore(world_offset);
+  }
 
   for (let y = y0; y < y1; y++) {
     for (let x = x0; x < x1; x++) {

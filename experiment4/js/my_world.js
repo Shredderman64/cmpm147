@@ -14,6 +14,7 @@
     p3_drawAfter
 */
 let eyes = new Map();
+
 function p3_preload() {}
 
 function p3_setup() {
@@ -45,7 +46,7 @@ function p3_tileClicked(i, j) {
   clicks[key] = 1 + (clicks[key] | 0);
 }
 
-function p3_drawBefore() {}
+function p3_drawAfter() {}
 
 function p3_drawTile(i, j, x, y) {
   noStroke();
@@ -86,7 +87,7 @@ class Eye {
     this.vigilance = 200;
     this.lastMouse = [mouseX, mouseY];
     this.theta = 0;
-    this.thetaStep = random(-5, 5);
+    this.thetaStep = map(floor(this.seed % 10), 0, 10, -5, 5);
   }
   
   lazyEye(x, y) {
@@ -111,7 +112,7 @@ class Eye {
       ellipse(0, 0, tw);
       
       if (this.seed % 16 == 0) fill("lightblue");
-      else if (this.seed % 20 == 0) fill("green");
+      else if (this.seed % 12 == 0) fill("green");
       else fill("orange");
       ellipse(cos(this.theta) * tw / 4, sin(this.theta) * tw / 4, 15);
 
